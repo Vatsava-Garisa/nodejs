@@ -25,7 +25,7 @@ class MyDecryptStream extends Transform {
 }
 
 const myReadStream = fs.createReadStream('notes.js');
-const myWriteStream = fs.createWriteStream('text.txt');
+const myWriteStream = fs.createWriteStream('test.txt');
 const encrypt = new MyEncryptStream();
 const decrypt = new MyDecryptStream();
 
