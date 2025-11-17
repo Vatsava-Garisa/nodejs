@@ -37,7 +37,7 @@
  */
 
 /** File Encoding
- * You only use encoing for:
+ * You only use encoding for:
     * String -> Buffer
     * Buffer -> String (Only when you know it's text)
  * 
@@ -46,11 +46,10 @@
     * Copying bytes
     * Slicing/appening raw data
  * 
- * Files are stored ad bytes, not text.
+ * Files are stored in bytes, not text.
  * If the file contains text, decode with the correct encoding (usually UTF-8).
  * If the file is binary, do not decode into a string - Any encoding will corrupt it.
  * Only strings require encoding.
- * 
  */
 
 const text = 'Hello World';
