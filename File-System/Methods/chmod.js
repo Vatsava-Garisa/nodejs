@@ -38,3 +38,36 @@ async function secureCredentialFiles(directory) {
         }
     }
 }
+
+/**
+ * fs.readdir(directory, { withFileTypes: true })
+ * Returns Dirent objects, not just filenames.
+ * Each item has:
+ * .isFile()
+ * .isDirectory()
+ * .isSymbolicLink()
+ * .name
+ */
+
+async function secureCredentialFiles(directory) {
+    const entries = await fsPromises.readdir(directory, { withFileTypes: true });
+
+    for (const entry of entries) {
+        const fullPath = path.join(directory, entry.name);
+
+        if (entry.isDirectory()) {
+            // Recursively check inside this directory
+            await secureCredentialFiles(fullPath);
+        } else {
+            // Check if filename contains sensitive keywords
+            if (
+                entry.name.includes("key") ||
+                entry.name.includes("secret") ||
+                entry.name.includes("credential")
+            ) {
+                await fsPromises.chmod(fullPath, 0o600); // rw-------
+                console.log(`Secured: ${fullPath}`);
+            }
+        }
+    }
+}
