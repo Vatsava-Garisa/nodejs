@@ -1,6 +1,13 @@
 
 /**
  * Description: Opens a file and returns a file descriptor for low-level operations.
+ * filehandle.read(buffer, offset, length, position)
+ * buffer - A buffer that will be filled with the file data read.
+ * offset - The location in the buffer at which to start filling. (Default: 0)
+ * length - The number of bytes to read. (Default: buffer.byteLength - offset)
+ * position - The location where to begin reading data from the file. 
+ *  If null or -1, data will be read from the current file position, and the position will be updated. 
+ *  If position is a non-negative integer, the current file position will remain unchanged. (Default: null)
  */
 
 const fs = require('fs');
