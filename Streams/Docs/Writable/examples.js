@@ -89,3 +89,112 @@ writeThousandLines(myWriteStream, 'utf8', () => {
     }, 10 * 1000);
 });
 */
+
+function createBigFile() {
+    let i = 0;
+    const MAX_BUFFER_SIZE = 16 * 1024;
+    let chunks = '';
+
+    const myWriteStream = fs.createWriteStream('./test.txt');
+
+    myWriteStream.on('finish', () => {
+        console.log('Write complete');
+        console.timeEnd('writeFile');
+    });
+
+    myWriteStream.on('drain', () => {
+        write_to_file();
+    });
+
+    console.time('writeFile');
+
+    function write_to_file() {
+        while (i < 1000000) {
+            let write_text = ` ${i} `;
+            chunks += write_text;
+            i++;
+
+            if (chunks.length >= MAX_BUFFER_SIZE) {
+                let ok = myWriteStream.write(chunks);
+                chunks = '';
+                if (!ok) return;
+            }
+        }
+
+        if (chunks.length > 0) {
+            myWriteStream.end(chunks);
+        } else {
+            myWriteStream.end();
+        }
+    }
+
+    write_to_file();
+}
+
+function copyBigFile() {
+    console.time('copy');
+    const myReadStream = fs.createReadStream('test.txt', { highWaterMark: 16 * 1024 });
+    const myWriteStream = fs.createWriteStream('copy.txt');
+
+    myReadStream.on('data', (chunk) => {
+        let ok = myWriteStream.write(chunk);
+        if (!ok) {
+            myReadStream.pause();
+        }
+    });
+
+    myReadStream.on('end', () => {
+        myWriteStream.end();
+    });
+
+    myWriteStream.on('drain', () => {
+        myReadStream.resume();
+    });
+
+    myWriteStream.on('finish', () => {
+        console.log('Copy Completed');
+        console.timeEnd('copy');
+    });
+}
+
+function copyEven() {
+    console.time('copyEven');
+    let write = '';
+    const myReadStream = fs.createReadStream('test.txt');
+    const myWriteStream = fs.createWriteStream('copy_even.txt');
+
+    myReadStream.on('data', (chunk) => {
+        let data = chunk.toString('utf8').split('  ');
+
+        if (+data[0] !== +data[1] - 1) {
+            data[0] = write + data[0];
+        }
+
+        if (+data[data.length - 2] !== +data[data.length - 1] - 1) {
+            write += data[data.length - 1];
+            data.pop();
+        }
+
+        for (let num of data) {
+            if (+num % 2 === 0) {
+                let ok = myWriteStream.write(' ' + num + ' ');
+                if (!ok) {
+                    myReadStream.pause();
+                }
+            }
+        }
+    });
+
+    myReadStream.on('end', () => {
+        myWriteStream.end();
+    });
+
+    myWriteStream.on('drain', () => {
+        myReadStream.resume();
+    });
+
+    myWriteStream.on('finish', () => {
+        console.log('Copy Completed');
+        console.timeEnd('copyEven');
+    });
+}

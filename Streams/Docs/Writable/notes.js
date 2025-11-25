@@ -21,5 +21,5 @@
  * │      (disk/network/process)             │
  * └─────────────────────────────────────────┘
  * 
- * write() returns false when buffer is full!
+ * write() returns false when buffer is full! - data STILL gets written to the internal buffer.
  */
